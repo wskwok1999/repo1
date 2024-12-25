@@ -11,16 +11,6 @@ class GifDisplayApp:
         self.gif_folder_1 = gif_folder_1
         self.gif_folder_2 = gif_folder_2
 
-        # Debug folder checks
-        #print("GIF folder 1 exists:", os.path.exists(self.gif_folder_1))
-        #print("GIF folder 2 exists:", os.path.exists(self.gif_folder_2))
-
-        # Create UI
-        self.label_1 = tk.Label(root)
-        self.label_1.grid(row=0, column=0)
-        self.label_2 = tk.Label(root)
-        self.label_2.grid(row=0, column=1)
-
         self.frames_1 = []
         self.frames_2 = []
         self.current_frame_1 = 0
@@ -34,6 +24,27 @@ class GifDisplayApp:
         self.root.attributes("-fullscreen",True)
         self.root.config(bg="black")
 
+        self.main_frame = tk.Frame(self.root, bg="black")
+        self.main_frame.pack(fill="both", expand=True)
+
+        self.frame_1 = tk.Frame(self.main_frame, bg="black", width=400)
+        self.frame_1.pack(side="left", fill="both", expand=True, padx=0)
+
+        self.title_1 = tk.Label(self.frame_1, text="Aurora Borealis (Northern Hemisphere)", font=("Helvetica", 12,"bold"), fg="white",bg="black")
+        self.title_1.pack(anchor="center", pady=10)
+
+        self.label_1 = tk.Label(self.frame_1, bg="black")
+        self.label_1.pack(fill="both", expand=True)
+
+        self.frame_2 = tk.Frame(self.main_frame, bg = "black",width=400)
+        self.frame_2.pack(side="right", fill="both", expand=True, padx=0)
+
+        self.title_2 = tk.Label(self.frame_2, text="Aurora Australis (Southern Hemisphere)", font=("Helvetica", 12,"bold"), fg="white",bg="black")
+        self.title_2.pack(anchor="center", pady=10)
+
+        self.label_2 = tk.Label(self.frame_2, bg="black")
+        self.label_2.pack(fill="both", expand=True)
+
         self.update_gifs()
 
     def load_frames(self, gif_path):
@@ -42,6 +53,7 @@ class GifDisplayApp:
         frames = []
         try:
             while True:
+                #img_resized = img.copy().resize((380, 380))
                 frames.append(ImageTk.PhotoImage(img.copy()))
                 img.seek(img.tell() + 1)
         except EOFError:
@@ -85,7 +97,7 @@ class GifDisplayApp:
 
 def run_display_app(gif_folder_1, gif_folder_2):
     root = tk.Tk()
-    root.title("Aurora Borealis (Northern Hemisphere)                                  Aurora Australis (Southern Hemisphere)")
+    #root.title("Aurora Borealis (Northern Hemisphere)                                  Aurora Australis (Southern Hemisphere)")
     root.geometry("800x400")
     root.attributes("-fullscreen",True)
     root.config(bg="black")
