@@ -6,10 +6,11 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 class GifDisplayApp:
-    def __init__(self, root, gif_folder_1, gif_folder_2):
+    def __init__(self, root, gif_folder_1, gif_folder_2, signal_file):
         self.root = root
         self.gif_folder_1 = gif_folder_1
         self.gif_folder_2 = gif_folder_2
+        self.signal_file = signal_file
 
         self.frames_1 = []
         self.frames_2 = []
@@ -17,6 +18,8 @@ class GifDisplayApp:
         self.current_frame_2 = 0
         self.latest_gif_path_1 = None
         self.latest_gif_path_2 = None
+        self.last_signal_check = 0
+        self.signal_last_modified = 0
 
         self.check_interval = 30000  # Check every 5 seconds
         self.last_checked = 0
@@ -59,6 +62,17 @@ class GifDisplayApp:
         except EOFError:
             print(f"Loaded {len(frames)} frames from {gif_path}")
         return frames
+    
+    def check_signal_file(self):
+            """Check if the signal file has been updated."""
+            try:
+                modified_time = os.path.getmtime(self.signal_file)
+                if modified_time != self.signal_last_modified:
+                    self.signal_last_modified = modified_time
+                    print("Signal file updated. Reloading GIFs...")
+                    self.check_for_new_gif()
+            except FileNotFoundError:
+                print("Signal file not found.")
 
     def check_for_new_gif(self):
         for i, (folder, frames, latest_path) in enumerate([
@@ -81,9 +95,10 @@ class GifDisplayApp:
                         self.latest_gif_path_2 = newest_gif_path
 
     def update_gifs(self):
-        if time.time() - self.last_checked > self.check_interval / 1000:
-            self.check_for_new_gif()
-            self.last_checked = time.time()
+        # Check the signal file for updates periodically
+        if time.time() - self.last_signal_check > 5:  # Check every 5 seconds
+            self.check_signal_file()
+            self.last_signal_check = time.time()
 
         if self.frames_1:
             self.label_1.config(image=self.frames_1[self.current_frame_1])
@@ -95,16 +110,16 @@ class GifDisplayApp:
 
         self.root.after(115, self.update_gifs)
 
-def run_display_app(gif_folder_1, gif_folder_2):
+def run_display_app(gif_folder_1, gif_folder_2, signal_file):
     root = tk.Tk()
     #root.title("Aurora Borealis (Northern Hemisphere)                                  Aurora Australis (Southern Hemisphere)")
     root.geometry("800x400")
     root.attributes("-fullscreen",True)
     root.config(bg="black")
 
-    app = GifDisplayApp(root, gif_folder_1, gif_folder_2)
+    app = GifDisplayApp(root, gif_folder_1, gif_folder_2, signal_file)
 
     root.mainloop()
 
 if __name__ == "__main__":
-    run_display_app("/home/wskwok1999/Documents/Python_Scripts/aurora_north_gif_display","/home/wskwok1999/Documents/Python_Scripts/aurora_south_gif_display")
+    run_display_app("/home/wskwok1999/Documents/Python_Scripts/aurora_north_gif_display","/home/wskwok1999/Documents/Python_Scripts/aurora_south_gif_display", "C:/home/wskwok1999/Documents/Python_Scripts/signal.txt")

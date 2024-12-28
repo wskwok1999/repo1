@@ -103,6 +103,11 @@ def create_gif_from_frames(input_folder, output_folder,display_folder, output_fi
     except Exception as e:
         print(f"Failed to copy GIF: {e}")
 
+def update_signal_file(signal_file):
+    with open(signal_file, "w") as f:
+        f.write("New GIF generated.")
+
+
 clear_folder("/home/wskwok1999/Documents/Python_Scripts/aurora_north_images")
 clear_folder("/home/wskwok1999/Documents/Python_Scripts/aurora_south_images")
 clear_folder("/home/wskwok1999/Documents/Python_Scripts/aurora_north_gif_gen")
@@ -127,3 +132,5 @@ resize_images(south_img_output_folder, south_img_output_folder, size=(400, 400))
 
 create_gif_from_frames(north_img_output_folder, north_gif_output_folder, north_gif_display_folder, "aurora_north.gif")
 create_gif_from_frames(south_img_output_folder, south_gif_output_folder, south_gif_display_folder, "aurora_south.gif")
+
+update_signal_file("C:/home/wskwok1999/Documents/Python_Scripts/signal.txt")
